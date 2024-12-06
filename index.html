@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Toast Notification Creator</title>
+    <title>webOS App and Toast Creator</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -48,49 +48,67 @@
     </style>
 </head>
 <body>
-    <h1>Toast Notification Creator</h1>
+    <h1>webOS App and Toast Creator</h1>
+    <div class="form-group">
+        <label for="url">URL:</label>
+        <input type="text" id="url" placeholder="Enter URL (e.g., ssap://com.webos.applicationManager/launch)">
+    </div>
     <div class="form-group">
         <label for="message">Message:</label>
-        <input type="text" id="message" placeholder="Enter your message">
+        <input type="text" id="message" placeholder="Enter your message for toast">
     </div>
     <div class="form-group">
         <label for="iconUrl">Icon URL:</label>
         <input type="text" id="iconUrl" placeholder="Enter icon URL">
     </div>
-    <button id="showNotification">Show Message</button>
+    <button id="executeAction">Execute Action</button>
 
     <div id="output" class="notification" style="display:none;">
-        Notification sent: <span id="outputMessage"></span>
+        Action executed: <span id="outputMessage"></span>
     </div>
 
     <script>
-        document.getElementById('showNotification').addEventListener('click', function () {
+        document.getElementById('executeAction').addEventListener('click', function () {
+            const url = document.getElementById('url').value.trim();
             const message = document.getElementById('message').value.trim();
             const iconUrl = document.getElementById('iconUrl').value.trim();
 
-            if (!message) {
-                alert('Please enter a message!');
-                return;
-            }
+            // If URL matches for app launch
+            if (url.startsWith('ssap://com.webos.applicationManager/launch')) {
+                const appId = JSON.parse(message).id;
+                const command = `luna-send-pub -f -n 1 ${url} '{"id":"${appId}"}' &`;
 
-            // If message is entered, set "openToast" to true
-            const openToast = true;
+                // Simulate sending the app launch command
+                console.log("Executing app launch:", command);
 
-            // Generate the luna-send-pub command only if the "openToast" is true
-            if (openToast) {
-                const command = `luna-send-pub -f -n 1 luna://com.webos.notification/createToast '{ 
+                // Display the result in the browser as feedback
+                const output = document.getElementById('output');
+                const outputMessage = document.getElementById('outputMessage');
+                output.style.display = 'block';
+                outputMessage.textContent = `Launching app with ID: "${appId}"`;
+
+            } else if (url.startsWith('luna://com.webos.notification/createToast')) {
+                // If the URL is for toast notification
+                if (!message) {
+                    alert('Please enter a message for the toast notification!');
+                    return;
+                }
+
+                const command = `luna-send-pub -f -n 1 ${url} '{ 
                     "message": "${message}",
                     "iconUrl": "${iconUrl}"
                 }' &`;
 
                 // Simulate sending the command (for demonstration)
-                console.log("Executing:", command);
+                console.log("Executing toast notification:", command);
 
-                // Display a simulated notification in the browser
+                // Display the result in the browser as feedback
                 const output = document.getElementById('output');
                 const outputMessage = document.getElementById('outputMessage');
                 output.style.display = 'block';
                 outputMessage.textContent = `"${message}" with icon: "${iconUrl}"`;
+            } else {
+                alert('Invalid URL. Please enter a valid ssap:// or luna:// URL.');
             }
         });
     </script>
