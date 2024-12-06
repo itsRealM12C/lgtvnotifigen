@@ -68,28 +68,30 @@
             const message = document.getElementById('message').value.trim();
             const iconUrl = document.getElementById('iconUrl').value.trim();
 
-            if (!message || !iconUrl) {
-                alert('Please fill in both the message and icon URL fields!');
+            if (!message) {
+                alert('Please enter a message!');
                 return;
             }
 
-            // Generate toast with luna-send-pub command to make it appear
-            const command = `luna-send-pub -f -n 1 luna://com.webos.notification/createToast '{ 
-    "message": "${message}",
-    "iconUrl": "${iconUrl}"
-}' &`;
+            // If message is entered, set "openToast" to true
+            const openToast = true;
 
-            // Simulate sending the command (for demonstration)
-            console.log("Executing:", command);
+            // Generate the luna-send-pub command only if the "openToast" is true
+            if (openToast) {
+                const command = `luna-send-pub -f -n 1 luna://com.webos.notification/createToast '{ 
+                    "message": "${message}",
+                    "iconUrl": "${iconUrl}"
+                }' &`;
 
-            // Display a notification in the browser
-            const output = document.getElementById('output');
-            const outputMessage = document.getElementById('outputMessage');
-            output.style.display = 'block';
-            outputMessage.textContent = `"${message}" with icon: "${iconUrl}"`;
+                // Simulate sending the command (for demonstration)
+                console.log("Executing:", command);
 
-            // Here, you could integrate this with a backend system or environment
-            // that supports direct execution of the command on a webOS device.
+                // Display a simulated notification in the browser
+                const output = document.getElementById('output');
+                const outputMessage = document.getElementById('outputMessage');
+                output.style.display = 'block';
+                outputMessage.textContent = `"${message}" with icon: "${iconUrl}"`;
+            }
         });
     </script>
 </body>
