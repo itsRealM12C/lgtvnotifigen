@@ -38,9 +38,11 @@
             background-color: #0056b3;
         }
 
-        pre {
-            background: #f4f4f4;
-            padding: 10px;
+        .notification {
+            margin-top: 20px;
+            padding: 15px;
+            background: #f8f9fa;
+            border: 1px solid #ddd;
             border-radius: 5px;
         }
     </style>
@@ -55,13 +57,14 @@
         <label for="iconUrl">Icon URL:</label>
         <input type="text" id="iconUrl" placeholder="Enter icon URL">
     </div>
-    <button id="generateCommand">Generate Toast Command</button>
+    <button id="showNotification">Show Message</button>
 
-    <h2>Generated Command:</h2>
-    <pre id="commandOutput">Your command will appear here...</pre>
+    <div id="output" class="notification" style="display:none;">
+        Notification sent: <span id="outputMessage"></span>
+    </div>
 
     <script>
-        document.getElementById('generateCommand').addEventListener('click', function () {
+        document.getElementById('showNotification').addEventListener('click', function () {
             const message = document.getElementById('message').value.trim();
             const iconUrl = document.getElementById('iconUrl').value.trim();
 
@@ -70,14 +73,23 @@
                 return;
             }
 
-            // Build the luna-send-pub command
+            // Create the luna-send-pub command
             const command = `luna-send-pub -f -n 1 luna://com.webos.notification/createToast '{ 
     "message": "${message}",
     "iconUrl": "${iconUrl}"
 }' &`;
 
-            // Display the command
-            document.getElementById('commandOutput').textContent = command;
+            // Simulate sending the command (for demonstration)
+            console.log("Executing:", command);
+
+            // Display a notification in the browser
+            const output = document.getElementById('output');
+            const outputMessage = document.getElementById('outputMessage');
+            output.style.display = 'block';
+            outputMessage.textContent = `"${message}" with icon: "${iconUrl}"`;
+
+            // Here, you could integrate this with a backend system or environment
+            // that supports direct execution of the command on a webOS device.
         });
     </script>
 </body>
